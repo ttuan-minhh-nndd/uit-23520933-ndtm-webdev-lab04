@@ -1,0 +1,80 @@
+.posts-container {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.posts-header {
+  margin-bottom: 32px;
+}
+
+.posts-header h1 {
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 2rem;
+}
+
+.posts-count {
+  color: #666;
+  font-size: 1rem;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.post-card {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.post-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+}
+
+.post-title {
+  color: #333;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.post-body {
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.read-more {
+  color: #667eea;
+  font-weight: 500;
+  font-size: 0.9rem;
+  align-self: flex-start;
+}
+
+.post-card:hover .read-more {
+  text-decoration: underline;
+}
