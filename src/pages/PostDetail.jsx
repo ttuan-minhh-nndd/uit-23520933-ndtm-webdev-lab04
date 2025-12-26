@@ -1,55 +1,39 @@
-import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import useFetch from '../hooks/useFetch';
 import '../styles/PostDetail.css';
 
 const PostDetail = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
-  const [post, setPost] = useState(null);
-  const [comments, setComments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  // useEffect: Fetch post and comments when postId changes
-  useEffect(() => {
-    const fetchPostData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  // Using custom useFetch hook to fetch post data
+  const {
+    data: post,
+    loading: postLoading,
+    error: postError,
+  } = useFetch(`https://jsonplaceholder.typicode.com/posts/${postId}`);
 
-        // Fetch post and comments in parallel
-        const [postResponse, commentsResponse] = await Promise.all([
-          fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`),
-          fetch(`https://jsonplaceholder.typicode.com/posts/${postId}/comments`),
-        ]);
+  // Using custom useFetch hook to fetch comments
+  const {
+    data: comments,
+    loading: commentsLoading,
+    error: commentsError,
+  } = useFetch(`https://jsonplaceholder.typicode.com/posts/${postId}/comments`);
 
-        if (!postResponse.ok) {
-          throw new Error('Post not found');
-        }
+  // Combine loading states
+  const loading = postLoading || commentsLoading;
+  const error = postError || commentsError;
 
-        const postData = await postResponse.json();
-        const commentsData = await commentsResponse.json();
-
-        setPost(postData);
-        setComments(commentsData);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPostData();
-  }, [postId]);
-
+  // Display loading state
   if (loading) {
     return (
       <div className="post-detail-container">
-        <div className="loading">Loading post...</div>
+        <div className="loading">Loading...</div>
       </div>
     );
   }
 
+  // Display error state
   if (error) {
     return (
       <div className="post-detail-container">
@@ -61,6 +45,7 @@ const PostDetail = () => {
     );
   }
 
+  // Handle post not found
   if (!post) {
     return (
       <div className="post-detail-container">
@@ -91,10 +76,10 @@ const PostDetail = () => {
 
       <section className="comments-section">
         <h2 className="comments-title">
-          Comments ({comments.length})
+          Comments ({comments ? comments.length : 0})
         </h2>
         <div className="comments-list">
-          {comments.map((comment) => (
+          {comments && comments.map((comment) => (
             <div key={comment.id} className="comment-card">
               <div className="comment-header">
                 <h3 className="comment-name">{comment.name}</h3>

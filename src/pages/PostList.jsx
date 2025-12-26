@@ -1,44 +1,23 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import useFetch from '../hooks/useFetch';
 import '../styles/PostList.css';
 
 const PostList = () => {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // Using custom useFetch hook to fetch posts
+  const { data: posts, loading, error } = useFetch(
+    'https://jsonplaceholder.typicode.com/posts'
+  );
 
-  // useEffect: Fetch posts when component mounts
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch posts');
-        }
-        
-        const data = await response.json();
-        // Limit to first 20 posts for better UX
-        setPosts(data.slice(0, 20));
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, []);
-
+  // Display loading state
   if (loading) {
     return (
       <div className="posts-container">
-        <div className="loading">Loading posts...</div>
+        <div className="loading">Loading...</div>
       </div>
     );
   }
 
+  // Display error state
   if (error) {
     return (
       <div className="posts-container">
@@ -47,15 +26,18 @@ const PostList = () => {
     );
   }
 
+  // Limit to first 20 posts for better UX
+  const displayPosts = posts ? posts.slice(0, 20) : [];
+
   return (
     <div className="posts-container">
       <div className="posts-header">
         <h1>All Blog Posts</h1>
-        <p className="posts-count">{posts.length} posts available</p>
+        <p className="posts-count">{displayPosts.length} posts available</p>
       </div>
 
       <div className="posts-grid">
-        {posts.map((post) => (
+        {displayPosts.map((post) => (
           <Link
             to={`/dashboard/post/${post.id}`}
             key={post.id}
